@@ -1,4 +1,7 @@
-/* async function findBestMatchForTask(taskId) {
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+async function findBestMatchForTask(taskId) {
     // Utilisez Prisma Client pour récupérer la tâche et ses compétences requises
     const task = await prisma.assignment.findUnique({
         where: { id: taskId },
@@ -41,4 +44,3 @@ function calculateScore(employee, requiredSkills) {
     // ...
     return score;
 }
-*/

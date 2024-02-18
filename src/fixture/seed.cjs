@@ -18,6 +18,29 @@ const skills = [
     "Agile Methodologies",
 ];
 
+const tasks = [
+    "Création de site vitrine",
+    "Création d'un SaaS",
+    "Refacto de code",
+    "Migration d'une stack",
+    "Changement de design du front",
+    "Optimisation des performances d'une application",
+    "Ajout de fonctionnalités de paiement en ligne",
+    "Mise en place d'un système de notifications en temps réel",
+    "Développement d'une application mobile",
+    "Intégration d'un système de gestion des utilisateurs",
+    "Déploiement d'une application sur le cloud",
+    "Mise en place d'un système de sauvegarde automatique",
+    "Développement d'un chatbot pour le support client",
+    "Migration vers une architecture microservices",
+    "Intégration d'un système de gestion de contenu (CMS)",
+    "Configuration d'un serveur de messagerie électronique",
+    "Développement d'une API REST pour une application web",
+    "Création d'un tableau de bord pour visualiser les données",
+    "Optimisation du référencement (SEO) d'un site web",
+    "Mise en place d'un système de surveillance et de logging",
+];
+
 async function createRandomSkills(number, employeeId) {
     let skillsPromises = [];
     for (let i = 0; i < number; i++) {
@@ -48,21 +71,6 @@ async function createRandomAvailabilities(employeeId, number) {
     await Promise.all(availabilitiesPromises);
 }
 
-async function createRandomPerformanceReviews(employeeId, number) {
-    const performanceReviewsPromises = [];
-    for (let i = 0; i < number; i++) {
-        performanceReviewsPromises.push(prisma.performanceReview.create({
-            data: {
-                date: faker.date.past(),
-                comments: faker.lorem.sentence(),
-                rating: faker.number.int({ min: 1, max: 5 }),
-                employeeId,
-            },
-        }));
-    }
-    await Promise.all(performanceReviewsPromises);
-}
-
 async function createRandomEmployees(number) {
     const employeePromises = [];
     for (let i = 0; i < number; i++) {
@@ -72,9 +80,8 @@ async function createRandomEmployees(number) {
                     name: faker.person.fullName(),
                 },
             });
-            const skills = await createRandomSkills(faker.number.int({ min: 1, max: 5 }), employee.id);
+            await createRandomSkills(faker.number.int({ min: 1, max: 5 }), employee.id);
             await createRandomAvailabilities(employee.id, faker.number.int({ min: 1, max: 10 }));
-            await createRandomPerformanceReviews(employee.id, faker.number.int({ min: 1, max: 5 }));
             console.log(i + ' donnée créée');
         })());
     }
