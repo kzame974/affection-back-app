@@ -1,80 +1,94 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
+const skills = [
+    "JavaScript",
+    "Python",
+    "Data Analysis",
+    "Project Management",
+    "UI/UX Design",
+    "Machine Learning",
+    "SQL",
+    "Docker",
+    "Kubernetes",
+    "React",
+    "Node.js",
+    "Agile Methodologies",
+];
+
 async function createRandomSkills(number) {
-    let skills = [];
+    let skillsPromises = [];
     for (let i = 0; i < number; i++) {
-        const skill = await prisma.skill.create({
+        const skillName = faker.helpers.arrayElement(skills);
+        skillsPromises.push(prisma.skill.create({
             data: {
-                name: faker.random.word(),
+                name: skillName,
                 level: faker.datatype.number({ min: 1, max: 10 }),
             },
-        });
-        skills.push(skill);
+        }));
     }
-    return skills;
+    return Promise.all(skillsPromises);
 }
-
 async function createRandomEmployees(number) {
+    const employeePromises = [];
     for (let i = 0; i < number; i++) {
-        const employee = await prisma.employee.create({
-            data: {
-                name: faker.name.findName(),
-                skills: {
-                    create: await createRandomSkills(faker.datatype.number({ min: 1, max: 5 })),
+        employeePromises.push((async () => {
+            const skills = await createRandomSkills(faker.number.int({ min: 1, max: 5 }));
+            const employee = await prisma.employee.create({
+                data: {
+                    name: faker.person.fullName(),
+                    skills: {
+                        create: [
+                            { name: "Skill 1", level: faker.number.int({ min: 1, max: 5 }) },
+                        ],
+                    },
                 },
-            },
-        });
-        await createRandomAvailabilities(employee.id, 10); // Assuming you want 10 availabilities per employee
-        await createRandomPerformanceReviews(employee.id, 5); // Assuming you want 5 reviews per employee
+            });
+            await createRandomAvailabilities(employee.id, 10);
+            await createRandomPerformanceReviews(employee.id, 5);
+        })());
     }
+    await Promise.all(employeePromises); // Exécute en parallèle
 }
 
 async function createRandomAvailabilities(employeeId, number) {
+    const availabilitiesPromises = [];
     for (let i = 0; i < number; i++) {
-        await prisma.availability.create({
+        availabilitiesPromises.push(prisma.availability.create({
             data: {
                 date: faker.date.future(),
                 employeeId,
             },
-        });
+        }));
     }
+    await Promise.all(availabilitiesPromises); // Exécute en parallèle
 }
 
 async function createRandomPerformanceReviews(employeeId, number) {
+    const performanceReviewsPromises = [];
     for (let i = 0; i < number; i++) {
-        await prisma.performanceReview.create({
+        performanceReviewsPromises.push(prisma.performanceReview.create({
             data: {
                 date: faker.date.past(),
                 comments: faker.lorem.sentence(),
-                rating: faker.datatype.number({ min: 1, max: 5 }),
+                rating: faker.number.int({ min: 1, max: 5 }),
                 employeeId,
             },
-        });
+        }));
     }
+    await Promise.all(performanceReviewsPromises);
 }
 
 async function main() {
-    await createRandomEmployees(50); // Create 50 employees as an example
+    try {
+        await createRandomEmployees(50);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await prisma.$disconnect();
+    }
 }
 
-
-main()
-
-    .then(async () => {
-
-        await prisma.$disconnect()
-
-    })
-
-    .catch(async (e) => {
-
-        console.error(e)
-
-        await prisma.$disconnect()
-
-        process.exit(1)
-
-    })
+main();
