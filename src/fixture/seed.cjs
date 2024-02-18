@@ -18,7 +18,7 @@ const skills = [
     "Agile Methodologies",
 ];
 
-async function createRandomSkills(number) {
+async function createRandomSkills(number, employeeId) {
     let skillsPromises = [];
     for (let i = 0; i < number; i++) {
         const skillName = faker.helpers.arrayElement(skills);
@@ -26,6 +26,9 @@ async function createRandomSkills(number) {
             data: {
                 name: skillName,
                 level: faker.number.int({ min: 1, max: 10 }),
+                employees: {
+                    connect: { id: employeeId }
+                }
             },
         }));
     }
@@ -64,18 +67,15 @@ async function createRandomEmployees(number) {
     const employeePromises = [];
     for (let i = 0; i < number; i++) {
         employeePromises.push((async () => {
-            const skills = await createRandomSkills(faker.number.int({ min: 1, max: 5 }));
             const employee = await prisma.employee.create({
                 data: {
                     name: faker.person.fullName(),
-                    skills: {
-                        create: skills,
-                    },
                 },
             });
+            const skills = await createRandomSkills(faker.number.int({ min: 1, max: 5 }), employee.id);
             await createRandomAvailabilities(employee.id, faker.number.int({ min: 1, max: 10 }));
             await createRandomPerformanceReviews(employee.id, faker.number.int({ min: 1, max: 5 }));
-            console.log(i + 'donnée crée');
+            console.log(i + ' donnée créée');
         })());
     }
     await Promise.all(employeePromises);
@@ -84,7 +84,7 @@ async function createRandomEmployees(number) {
 async function main() {
     console.log('Starting data generation...');
     try {
-        await createRandomEmployees(50);
+        await createRandomEmployees(25);
         console.log('Data generation completed.');
     } catch (e) {
         console.error('Error during data generation:', e);
