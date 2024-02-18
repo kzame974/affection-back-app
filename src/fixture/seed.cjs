@@ -74,22 +74,28 @@ async function createRandomAssignments(number) {
 
 async function createRandomSkillsForEmployee(employeeId) {
     const skillsPromises = [];
-    for (const skill of skills) {
-        const skillLevel = faker.number.int({ min: 1, max: 10 });
-        skillsPromises.push(prisma.skillLevel.create({
-            data: {
-                level: skillLevel,
-                employee: {
-                    connect: { id: employeeId },
+    for (const skillName of skills) {
+        const skill = await prisma.skill.findUnique({
+            where: { name: skillName },
+        });
+        if (skill) {
+            const skillLevel = faker.random.number({ min: 1, max: 10 });
+            skillsPromises.push(prisma.skillLevel.create({
+                data: {
+                    level: skillLevel,
+                    employee: {
+                        connect: { id: employeeId },
+                    },
+                    skill: {
+                        connect: { id: skill.id },
+                    },
                 },
-                skill: {
-                    connect: { name: skill },
-                },
-            },
-        }));
+            }));
+        }
     }
     return Promise.all(skillsPromises);
 }
+
 
 async function createRandomEmployees(number) {
     const employeePromises = [];
@@ -110,7 +116,7 @@ async function createRandomEmployees(number) {
 async function main() {
     console.log('Starting data generation...');
     try {
-        await createRandomAssignments(10);
+        await createRandomAssignments(25);
         await createRandomEmployees(25);
         console.log('Data generation completed.');
     } catch (e) {

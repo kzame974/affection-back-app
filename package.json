@@ -23,7 +23,6 @@
   },
   "type": "module",
   "scripts": {
-    "seed": "ts-node src/fixture/seed.cjs",
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js",
     "build": "npm run compile"
