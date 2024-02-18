@@ -9,6 +9,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.0",
     "@prisma/client": "^5.9.1",
+    "@types/progress": "^2.0.7",
     "express": "^4.18.2",
     "graphql": "^16.8.1",
     "progress": "^2.0.3",
@@ -22,7 +23,7 @@
   },
   "type": "module",
   "scripts": {
-    "seed": "ts-node src/fixture/seed.ts",
+    "seed": "ts-node src/fixture/seed.cjs",
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js",
     "build": "npm run compile"
