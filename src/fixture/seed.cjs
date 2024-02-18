@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
 const { faker } = require('@faker-js/faker');
 
 const prisma = new PrismaClient();
@@ -41,34 +41,54 @@ const tasks = [
     "Mise en place d'un système de surveillance et de logging",
 ];
 
-async function createRandomSkills(number, employeeId) {
-    let skillsPromises = [];
+async function createRandomSkillsForAssignment(number) {
+    const skillsPromises = [];
     for (let i = 0; i < number; i++) {
         const skillName = faker.helpers.arrayElement(skills);
         skillsPromises.push(prisma.skill.create({
             data: {
                 name: skillName,
-                level: faker.number.int({ min: 1, max: 10 }),
-                employees: {
-                    connect: { id: employeeId }
-                }
             },
         }));
     }
     return Promise.all(skillsPromises);
 }
 
-async function createRandomAvailabilities(employeeId, number) {
-    const availabilitiesPromises = [];
+async function createRandomAssignments(number) {
+    const assignmentPromises = [];
     for (let i = 0; i < number; i++) {
-        availabilitiesPromises.push(prisma.availability.create({
+        const assignmentSkills = await createRandomSkillsForAssignment(faker.number.int({ min: 1, max: 5 }));
+        assignmentPromises.push(prisma.assignment.create({
             data: {
-                date: faker.date.future(),
-                employeeId,
+                task: faker.helpers.arrayElement(tasks),
+                requiredSkills: {
+                    connect: assignmentSkills.map(skill => ({ id: skill.id })),
+                },
+                startDate: faker.date.recent(),
+                endDate: faker.date.future(),
             },
         }));
     }
-    await Promise.all(availabilitiesPromises);
+    await Promise.all(assignmentPromises);
+}
+
+async function createRandomSkillsForEmployee(employeeId) {
+    const skillsPromises = [];
+    for (const skill of skills) {
+        const skillLevel = faker.number.int({ min: 1, max: 10 });
+        skillsPromises.push(prisma.skillLevel.create({
+            data: {
+                level: skillLevel,
+                employee: {
+                    connect: { id: employeeId },
+                },
+                skill: {
+                    connect: { name: skill },
+                },
+            },
+        }));
+    }
+    return Promise.all(skillsPromises);
 }
 
 async function createRandomEmployees(number) {
@@ -80,9 +100,8 @@ async function createRandomEmployees(number) {
                     name: faker.person.fullName(),
                 },
             });
-            await createRandomSkills(faker.number.int({ min: 1, max: 5 }), employee.id);
-            await createRandomAvailabilities(employee.id, faker.number.int({ min: 1, max: 10 }));
-            console.log(i + ' donnée créée');
+            await createRandomSkillsForEmployee(employee.id);
+            console.log(`Employee ${employee.name} created with skills.`);
         })());
     }
     await Promise.all(employeePromises);
@@ -91,6 +110,7 @@ async function createRandomEmployees(number) {
 async function main() {
     console.log('Starting data generation...');
     try {
+        await createRandomAssignments(10);
         await createRandomEmployees(25);
         console.log('Data generation completed.');
     } catch (e) {
