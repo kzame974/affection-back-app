@@ -3,7 +3,10 @@ FROM node:lts
 WORKDIR /app
 
 COPY package*.json ./
-COPY prisma ./prisma/
+RUN npm install
+
+RUN npm install -g ts-node
+
 COPY . .
 
 
@@ -11,9 +14,7 @@ RUN npm install
 
 RUN npx prisma generate --schema ./prisma/schema.prisma
 
-RUN npx tsc
+RUN npm run build
 
 EXPOSE 4000
-
-
-CMD [ "npm", "run", "start:migrate:prod" ]
+CMD ["node", "dist/index.js"]

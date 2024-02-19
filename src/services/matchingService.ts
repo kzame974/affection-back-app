@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-
+/*
 const prisma = new PrismaClient();
 async function findBestMatchForTask(taskId) {
     // Utilisez Prisma Client pour récupérer la tâche et ses compétences requises
@@ -20,7 +20,6 @@ async function findBestMatchForTask(taskId) {
         },
         include: {
             skills: true,
-            performanceReviews: true,
             // Incluez d'autres informations pertinentes
         }
     });
@@ -44,3 +43,4 @@ function calculateScore(employee, requiredSkills) {
     // ...
     return score;
 }
+*/

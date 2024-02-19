@@ -1,33 +1,52 @@
 import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
-export const assignmentResolver = {
+// Adjust the interface to expect string types for dates, matching GraphQL input types
+interface AssignmentArgs {
+    id?: string;
+    task?: string;
+    startDate?: string;
+    endDate?: string;
+}
+
+const assignmentResolver = {
     Query: {
         allAssignments: async () => {
             return prisma.assignment.findMany();
         },
     },
     Mutation: {
-        createAssignment: async (_: any, args: { task: string; startDate: String; endDate: String }) => {
+        createAssignment: async (_: any, args: AssignmentArgs) => {
+            const { task, startDate, endDate } = args;
+
             return prisma.assignment.create({
                 data: {
-                    task: args.task,
-                    // requiredSkills: { connect: ... } // Add skills connection if necessary
+                    task,
+                    // @ts-ignore
+                    startDate: startDate ? new Date(startDate) : undefined, // Convert string to Date
+                    endDate: endDate ? new Date(endDate) : undefined, // Convert string to Date or leave as undefined
                 },
             });
         },
-        updateAssignment: async (_: any, args: { id: string; task?: string; startDate?: String; endDate?: String }) => {
+        updateAssignment: async (_: any, args: AssignmentArgs) => {
+            const { id, task, startDate, endDate } = args;
             return prisma.assignment.update({
-                where: {id: args.id},
+                where: { id: id! },
                 data: {
-                    task: args.task,
+                    ...(task && { task }),
+                    ...(startDate && { startDate: new Date(startDate) }), // Ensure startDate is properly converted
+                    ...(endDate && { endDate: endDate ? new Date(endDate) : undefined }), // Convert endDate or set to undefined
                 },
             });
         },
         deleteAssignment: async (_: any, args: { id: string }) => {
+            const { id } = args;
             return prisma.assignment.delete({
-                where: {id: args.id},
+                where: { id },
             });
         },
     },
 };
+
+export default assignmentResolver;
