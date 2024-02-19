@@ -1,0 +1,19 @@
+type Employee {
+  id: ID!
+  name: String!
+  skills: [Skill!]!
+  availabilities: [Availability!]!
+  assignments: [Assignment!]!
+  skillLevels: [SkillLevel!]!
+}
+
+type Query {
+  allEmployees: [Employee!]!
+  getEmployee(id: ID!): Employee
+}
+
+type Mutation {
+  createEmployee(name: String!): Employee!
+  updateEmployee(id: ID!, name: String!): Employee!
+  deleteEmployee(id: ID!): Employee!
+}

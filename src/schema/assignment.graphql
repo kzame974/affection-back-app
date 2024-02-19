@@ -1,0 +1,18 @@
+type Assignment {
+  id: ID!
+  task: String!
+  requiredSkills: [Skill!]!
+  assignedTo: [Employee!]!
+  startDate: String!
+  endDate: String
+}
+
+type Query {
+  getAllAssignments: [Assignment!]!
+}
+
+type Mutation {
+  createAssignment(task: String!, startDate: String!, endDate: String, requiredSkillsIds: [ID!]!): Assignment!
+  updateAssignment(id: ID!, task: String, startDate: String, endDate: String): Assignment!
+  deleteAssignment(id: ID!): Assignment!
+}

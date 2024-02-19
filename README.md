@@ -9,6 +9,8 @@ docker exec -it affection-back-app-backend-1 bash
 
 migration:
 npx prisma migrate dev
+npx prisma migrate deploy
+
 lancer le script de fixture:
 node src/fixture/seed.cjs
 
