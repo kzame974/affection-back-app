@@ -3,14 +3,11 @@ FROM node:lts
 WORKDIR /app
 
 COPY package*.json ./
+COPY . .
+
 RUN npm install
 
 RUN npm install -g ts-node
-
-COPY . .
-
-
-RUN npm install
 
 RUN npx prisma generate --schema ./prisma/schema.prisma
 
