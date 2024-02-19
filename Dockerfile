@@ -1,14 +1,19 @@
-FROM node:latest
+FROM node:lts
 
 WORKDIR /app
 
 COPY package*.json ./
+COPY prisma ./prisma/
+COPY . .
+
+
 RUN npm install
 
-RUN npm install -g ts-node
+RUN npx prisma generate --schema ./prisma/schema.prisma
 
-COPY . .
-RUN npm run build
+RUN npx tsc
 
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+
+
+CMD [ "npm", "run", "start:migrate:prod" ]

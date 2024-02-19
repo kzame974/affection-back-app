@@ -8,23 +8,19 @@ export const assignmentResolver = {
         },
     },
     Mutation: {
-        createAssignment: async (_: any, args: { task: string; startDate: Date; endDate: Date }) => {
+        createAssignment: async (_: any, args: { task: string; startDate: String; endDate: String }) => {
             return prisma.assignment.create({
                 data: {
                     task: args.task,
-                    startDate: new Date(args.startDate),
-                    endDate: args.endDate ? new Date(args.endDate) : null,
                     // requiredSkills: { connect: ... } // Add skills connection if necessary
                 },
             });
         },
-        updateAssignment: async (_: any, args: { id: string; task?: string; startDate?: Date; endDate?: Date }) => {
+        updateAssignment: async (_: any, args: { id: string; task?: string; startDate?: String; endDate?: String }) => {
             return prisma.assignment.update({
                 where: {id: args.id},
                 data: {
                     task: args.task,
-                    startDate: args.startDate ? new Date(args.startDate) : undefined,
-                    endDate: args.endDate ? new Date(args.endDate) : undefined,
                 },
             });
         },

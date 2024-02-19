@@ -2,18 +2,20 @@
   "name": "affection-back-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.0",
+    "@graphql-tools/load": "^8.0.1",
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.1",
     "@prisma/client": "^5.9.1",
     "@types/progress": "^2.0.7",
     "express": "^4.18.2",
     "graphql": "^16.8.1",
+    "graphql-import-node": "^0.0.5",
     "progress": "^2.0.3",
     "ts-node": "^10.9.2"
   },
@@ -26,7 +28,6 @@
   "type": "module",
   "scripts": {
     "compile": "tsc",
-    "start": "npm run compile && node ./dist/index.js",
-    "build": "npm run compile"
+    "start": "npm run compile && node ./dist/index.js"
   }
 }
