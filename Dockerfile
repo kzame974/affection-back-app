@@ -11,7 +11,11 @@ COPY . .
 RUN npm install
 
 RUN npx prisma generate --schema ./prisma/schema.prisma
+
+RUN node ./fixture/skillsAndTaskFixture.cjs
+RUN node ./fixture/seed.cjs
+
 RUN npm run build
 
 EXPOSE 4000
-CMD ["node", "dist/schema.ts"]
+CMD ["node", "dist/index.js"]
