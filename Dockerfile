@@ -14,4 +14,4 @@ RUN npx prisma generate --schema ./prisma/schema.prisma
 RUN npm run build
 
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/schema.ts"]
