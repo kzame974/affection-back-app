@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id                String             @id @default(uuid())
+  name              String
+  skills            Skill[]            @relation("EmployeeSkills")
+  availabilities    Availability[]
+  assignments       Assignment[]       @relation("EmployeeAssignments")
+  skillLevels       SkillLevel[]
+}
+
+model Skill {
+  id        String    @id @default(uuid())
+  name      String
+  employees Employee[] @relation("EmployeeSkills")
+  assignments Assignment[] @relation("RequiredSkills")
+  skillLevels SkillLevel[]
+}
+
+model SkillLevel {
+  id         String   @id @default(uuid())
+  level      Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  skill      Skill    @relation(fields: [skillId], references: [id])
+  skillId    String
+
+  @@unique([employeeId, skillId])
+}
+
+model Assignment {
+  id             String      @id @default(uuid())
+  task           String
+  requiredSkills Skill[]     @relation("RequiredSkills")
+  assignedTo     Employee[]  @relation("EmployeeAssignments")
+  startDate      DateTime
+  endDate        DateTime?
+}
+
+model Availability {
+  id         String   @id @default(uuid())
+  date       DateTime
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+}
