@@ -1,6 +1,0 @@
-type SkillLevel {
-    id: ID!
-    level: Int!
-    employee: Employee!
-    skill: Skill!
-}
