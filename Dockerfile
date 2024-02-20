@@ -1,15 +1,19 @@
-FROM node:lts
+FROM node:latest
 
 WORKDIR /app
 
 COPY package*.json ./
+COPY prisma ./prisma/
 COPY . .
+
+# Install project dependencies
 
 RUN npm install
 
-RUN npm install -g ts-node
-
 RUN npx prisma generate --schema ./prisma/schema.prisma
+
+RUN node ./fixture/skillsAndTaskFixture.cjs
+RUN node ./fixture/seed.cjs
 
 RUN npm run build
 
