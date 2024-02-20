@@ -1,3 +1,5 @@
+
+export const typeDefs = `#graphql
 type Employee {
     id: ID!
     name: String!
@@ -42,3 +44,4 @@ type Query {
     availabilities: [Availability!]!
     recommendEmployeesForAssignment(assignmentId: ID!): [Employee!]!
 }
+`;

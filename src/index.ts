@@ -1,8 +1,8 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { typeDefs } from './schema';
-import { resolvers } from './resolvers';
-import { prisma } from './prisma/client';
+import {typeDefs} from "./schema/typeDefs";
+import {prisma} from "./prisma/client";
+import {resolvers} from "./resolvers";
 
 interface ContextValue {
     prisma: typeof prisma;
